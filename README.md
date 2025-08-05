@@ -21,26 +21,4 @@ Whether you're reviewing a 2-hour lecture or catching up on a missed webinar, Vi
 - Creators repurposing long content into bite-sized clips  
 - Language learners simplifying native-language videos
 
----
 
-## 🔧 Tech Stack (Backend Focused)
-
-- **Language:** Python  
-- **Key Libraries:** `moviepy`, `transformers`, `scikit-learn`, `nltk`  
-- **Video Handling:** FFmpeg / OpenCV  
-- **Text Analysis:** HuggingFace transformers, TextRank or custom NLP models
-
----
-
-## ⚙️ How to Run (Example)
-
-```bash
-# Step 1: Unzip the backend project
-unzip vidora-backend.zip
-cd vidora-backend
-
-# Step 2: Install dependencies
-pip install -r requirements.txt
-
-# Step 3: Run the main script
-python main.py --input "your_video_file.mp4"
