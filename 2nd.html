@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Summarizer Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+  <style>
+    :root {
+      --primary: #e50914;
+      --primary-dark: #b20710;
+      --secondary: #1a1a1a;
+      --text: #f3f3f3;
+      --text-secondary: #ccc;
+      --bg: #000000;
+      --card-bg: rgba(40, 40, 40, 0.8);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle at center, var(--primary) 0%, var(--bg) 70%);
+      opacity: 0.9;
+      animation: pulse 4s infinite alternate;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.1); opacity: 0.4; }
+      100% { transform: scale(1.2); opacity: 0.5; }
+    }
+    
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    
+    header {
+      padding: 2rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+      z-index: -1;
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+    
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s;
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    
+    .cta-button {
+      padding: 0.7rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(229, 9, 20, 0.6);
+    }
+    
+    .hero {
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, #fff, var(--text-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    
+    .input-container {
+      display: flex;
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s;
+    }
+    
+    .input-container:focus-within {
+      box-shadow: 0 5px 25px rgba(229, 9, 20, 0.5);
+    }
+    
+    #youtube-link {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+    }
+    
+    #summarize-btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    #summarize-btn:hover {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    }
+    
+    #summary-output {
+      max-width: 800px;
+      margin: 3rem auto 0;
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    #summary-output h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    #summary-content {
+      margin-bottom: 1.5rem;
+    }
+    
+    #summary-output p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    #summary-output ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    #summary-output li {
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+    
+    .summary-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .action-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .copy-btn {
+      background: rgba(229, 9, 20, 0.2);
+      color: var(--primary);
+    }
+    
+    .copy-btn:hover {
+      background: rgba(229, 9, 20, 0.3);
+    }
+    
+    .download-btn {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .download-btn:hover {
+      background: var(--primary-dark);
+    }
+    
+    .reset-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+    
+    .reset-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .features {
+      padding: 4rem 2rem;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      display: block;
+      width: 100%;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 3px;
+      background: var(--primary);
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(229, 9, 20, 0.2);
+      border-color: var(--primary);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    
+    .feature-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+    
+    .feature-desc {
+      color: var(--text-secondary);
+    }
+    
+    .how-it-works {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    
+    .steps {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 50px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--primary), transparent);
+      z-index: 0;
+    }
+    
+    .step {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      width: 250px;
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+    
+    .step:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 25px rgba(229, 9, 20, 0.3);
+    }
+    
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1rem;
+    }
+    
+    .testimonials {
+      padding: 4rem 2rem;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .testimonial-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(229, 9, 20, 0.2);
+    }
+    
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+    
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+    
+    .author-info h4 {
+      color: white;
+      margin-bottom: 0.2rem;
+    }
+    
+    .author-info p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .cta-section {
+      padding: 4rem 2rem;
+      text-align: center;
+      background: linear-gradient(to bottom, rgba(229, 9, 20, 0.1), rgba(0, 0, 0, 0.8));
+    }
+    
+    .cta-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .cta-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .cta-section p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    
+    footer {
+      padding: 3rem 2rem;
+      background: rgba(0, 0, 0, 0.8);
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+    
+    .copyright {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .input-container {
+        flex-direction: column;
+        border-radius: 10px;
+      }
+      
+      #youtube-link {
+        padding: 1rem;
+      }
+      
+      #summarize-btn {
+        width: 100%;
+        border-radius: 0 0 10px 10px;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .steps {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .steps::before {
+        display: none;
+      }
+      
+      .step {
+        width: 100%;
+      }
+      
+      .summary-actions {
+        flex-direction: column;
+      }
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .delay-1 { transition-delay: 0.2s; }
+    .delay-2 { transition-delay: 0.4s; }
+    .delay-3 { transition-delay: 0.6s; }
+
+    /* Language selector styles */
+    .language-selector {
+      margin: 1rem auto;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .language-selector label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .language-selector select {
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      outline: none;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .language-selector select:hover {
+      border-color: var(--primary);
+    }
+    
+    .language-selector select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.3);
+    }
+    
+    /* Debug styles */
+    .debug-outline * {
+      outline: 1px solid rgba(255, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  <div id="particles-js"></div>
+
+  <nav>
+    <div class="logo">VidoraPro</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="fade-in">Transform Long Videos Into Quick Summaries</h1>
+      <p class="fade-in delay-1">Save hours of watching time with our AI-powered YouTube summarizer that extracts key points from any video.</p>
+      
+      <div class="input-container fade-in delay-2">
+        <input type="text" id="youtube-link" placeholder="Paste YouTube URL here...">
+        <button id="summarize-btn">Summarize Now</button>
+      </div>
+      
+      <div class="language-selector fade-in delay-2">
+        <label for="language-select">Summary Language:</label>
+        <select id="language-select">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="hi">Hindi</option>
+          <option value="ja">Japanese</option>
+        </select>
+      </div>
+      
+      <div id="summary-output">
+        <h3>Video Summary</h3>
+        <div id="summary-content"></div>
+        <div class="summary-actions">
+          <button class="action-btn copy-btn" id="copy-summary">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+          <button class="action-btn download-btn" id="download-summary">
+            <i class="fas fa-download"></i> Download
+          </button>
+          <button class="action-btn reset-btn" id="reset-summary">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="features" id="features">
+    <h2 class="section-title fade-in">Powerful Features</h2>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⏱️</div>
+        <h3 class="feature-title">Time Saver</h3>
+        <p class="feature-desc">Get the essence of hours-long videos in minutes, saving you precious time for what matters most.</p>
+      </div>
+      
+      <div class="feature-card fade-in delay-1">
+        <div class="feature-icon">🧠</div>
+        <h3 class="feature-title">AI-Powered</h3>
+        <p class="feature-desc">Our advanced algorithms understand context and extract truly meaningful insights from videos.</p>
+      </div>
+      
+      <div class="feature-card fade-in delay-2">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">Key Points</h3>
+        <p class="feature-desc">Receive bullet-point summaries highlighting the most important information from each video.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how-it-works">
+    <h2 class="section-title fade-in">How It Works</h2>
+    <div class="steps">
+      <div class="step fade-in">
+        <div class="step-number">1</div>
+        <h3>Paste URL</h3>
+        <p>Copy and paste any YouTube video link into our summarizer</p>
+      </div>
+      
+      <div class="step fade-in delay-1">
+        <div class="step-number">2</div>
+        <h3>AI Processing</h3>
+        <p>Our system analyzes the video content and transcripts</p>
+      </div>
+      
+      <div class="step fade-in delay-2">
+        <div class="step-number">3</div>
+        <h3>Get Summary</h3>
+        <p>Receive a concise, easy-to-read summary in seconds</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials" id="testimonials">
+    <h2 class="section-title fade-in">What Users Say</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">"This tool has saved me countless hours of research. I can now quickly assess whether a video is worth watching in full."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">JD</div>
+          <div class="author-info">
+            <h4>John Doe</h4>
+            <p>Researcher, Harvard University</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-card fade-in delay-1">
+        <p class="testimonial-text">"As a student, this helps me study more efficiently by summarizing lecture videos and educational content."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SM</div>
+          <div class="author-info">
+            <h4>Sarah Miller</h4>
+            <p>Medical Student</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-card fade-in delay-2">
+        <p class="testimonial-text">"Perfect for business research! I can quickly gather insights from industry videos without watching hours of content."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RJ</div>
+          <div class="author-info">
+            <h4>Robert Johnson</h4>
+            <p>Marketing Director</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2 class="fade-in">Ready to Save Time?</h2>
+      <p class="fade-in delay-1">Start summarizing YouTube videos today and get back hours of your precious time.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact Us</a>
+      <a href="#">API</a>
+      <a href="#">Blog</a>
+    </div>
+    <p class="copyright">© 2023 YouTube Summarizer Pro. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Debug mode - shows element outlines
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'd' && e.ctrlKey) {
+        document.body.classList.toggle('debug-outline');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM fully loaded - initializing...');
+
+      // Initialize Particles.js with error handling
+      try {
+        if(typeof particlesJS === 'function') {
+          particlesJS('particles-js', {
+            particles: {
+              number: { value: 100, density: { enable: true, value_area: 800 } },
+              color: { value: "#e50914" },
+              shape: { type: "circle" },
+              opacity: { value: 0.5, random: true },
+              size: { value: 3, random: true },
+              line_linked: { 
+                enable: true, 
+                distance: 150, 
+                color: "#e50914", 
+                opacity: 0.4, 
+                width: 1 
+              },
+              move: { 
+                enable: true, 
+                speed: 6,  // Increased speed
+                direction: "none", 
+                random: true, 
+                straight: false, 
+                out_mode: "out" 
+              }
+            },
+            interactivity: {
+              detect_on: "canvas",
+              events: {
+                onhover: { enable: true, mode: "repulse" },
+                onclick: { enable: true, mode: "push" },
+                resize: true
+              },
+              modes: {
+                repulse: { distance: 100, duration: 0.4 },
+                push: { particles_nb: 4 }
+              }
+            },
+            retina_detect: true
+          });
+          console.log("Particles.js initialized successfully");
+        } else {
+          console.warn("Particles.js not loaded - using fallback background");
+          document.getElementById('particles-js').style.background = 
+            'radial-gradient(circle, #e50914 0%, #000000 70%)';
+        }
+      } catch(e) {
+        console.error("Particles.js error:", e);
+      }
+
+      // Enhanced Scroll Animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          entry.target.classList.toggle('visible', entry.isIntersecting);
+        });
+      }, { 
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+
+      // YouTube URL validation
+      function isValidYouTubeUrl(url) {
+        const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+        return pattern.test(url);
+      }
+
+      // Set API_BASE to your Flask summary endpoint
+const API_BASE = 'http://127.0.0.1:5000/api/summary';
+
+      // Summarize functionality
+      document.getElementById('summarize-btn').addEventListener('click', async function() {
+  const url = document.getElementById('youtube-link').value.trim();
+  if (!url) {
+    alert('Please enter a YouTube URL');
+    return;
+  }
+  this.textContent = 'Processing...';
+  this.disabled = true;
+  document.getElementById('summary-output').style.display = 'block';
+  document.getElementById('summary-content').innerHTML = '<p>Generating summary... Please wait.</p>';
+  try {
+    const response = await fetch(API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url })
+    });
+    let data = null;
+    let text = await response.text();
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      document.getElementById('summary-content').innerHTML = 'Server error: ' + text;
+      return;
+    }
+    if (data.summary) {
+      document.getElementById('summary-content').innerHTML = data.summary;
+    } else if (data.error) {
+      document.getElementById('summary-content').innerHTML = 'Error: ' + data.error;
+    } else {
+      document.getElementById('summary-content').innerHTML = 'No summary available.';
+    }
+  } catch (error) {
+    document.getElementById('summary-content').innerHTML = 'Summary generation failed: ' + error;
+  } finally {
+    this.textContent = 'Summarize Now';
+    this.disabled = false;
+  }
+});
+
+      // Copy functionality
+      document.getElementById('copy-summary').addEventListener('click', function() {
+        const text = document.getElementById('summary-content').textContent;
+        if (!text || text.trim() === '') {
+          alert('No summary content to copy');
+          return;
+        }
+        
+        navigator.clipboard.writeText(text).then(() => {
+          const original = this.innerHTML;
+          this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => this.innerHTML = original, 2000);
+        }).catch(err => {
+          console.error('Copy failed:', err);
+          alert('Failed to copy text. Please try again.');
+        });
+      });
+
+      // Download functionality - Fixed version
+      document.getElementById('download-summary').addEventListener('click', function() {
+        try {
+          const text = document.getElementById('summary-content').textContent;
+          if (!text || text.trim() === '') {
+            alert('No summary content to download');
+            return;
+          }
+
+          let filename = 'youtube-summary.txt';
+          const url = document.getElementById('youtube-link').value.trim();
+          
+          
+
+          // Create blob and downloa
+          const blob = new Blob([text], { type: 'text/plain' });
+          const blobUrl = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          
+          // Cleanup
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+          }, 100);
+          
+        } catch (error) {
+          console.error('Download failed:', error);
+          alert('Failed to download summary. Please try again.');
+        }
+      });
+
+      // Reset functionality
+      document.getElementById('reset-summary').addEventListener('click', function() {
+        document.getElementById('youtube-link').value = '';
+        document.getElementById('summary-content').innerHTML = '';
+        document.getElementById('summary-output').style.display = 'none';
+      });
+
+      // Smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      console.log("Initialization complete");
+    });
+    
+
+const API_BASE = 'http://localhost:5000/api/summary';
+const token = localStorage.getItem('token');
+
+// Verify authentication on page load
+if (!token) {
+  alert('Please login first');
+  window.location.href = '1st.html';
+}
+
+// Display user email if needed
+const userEmail = localStorage.getItem('userEmail');
+if (userEmail && document.getElementById('user-email')) {
+  document.getElementById('user-email').textContent = userEmail;
+}
+
+// Summarize functionality
+// Update the summarize button handler
+// (Assume the input id is 'youtube-link')
+document.getElementById('summarize-btn').addEventListener('click', async function() {
+  const url = document.getElementById('youtube-link').value.trim();
+  // No need for language if Flask API doesn't use it
+
+  if (!url) {
+    alert('Please enter a YouTube URL');
+    return;
+  }
+
+  this.textContent = 'Processing...';
+  this.disabled = true;
+
+  document.getElementById('summary-output').style.display = 'block';
+  document.getElementById('summary-content').innerHTML = '<p>Translating... Please wait.</p>';
+
+  try {
+    const response = await fetch(API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ url })
+    });
+    const data = await response.json();
+    if (data.summary) {
+      document.getElementById('summary-content').innerHTML = data.summary;
+    } else if (data.data?.content) {
+      document.getElementById('summary-content').innerHTML = data.data.content;
+    } else {
+      document.getElementById('summary-content').innerHTML = 'No summary available.';
+    }
+  } catch (error) {
+    alert('Summary generation failed');
+  } finally {
+    this.textContent = 'Summarize Now';
+    this.disabled = false;
+  }
+});
+
+// Logout functionality
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('userEmail');
+  window.location.href = '1st.html';
+}
+  </script>
+</body>
+</html>
+
+
